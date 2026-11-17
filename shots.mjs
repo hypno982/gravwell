@@ -56,13 +56,18 @@ const SHOTS = [
   },
   {
     name: '02-play.jpg',
-    // Play in progress: room 7, two posts placed, the pod mid-arc with its HUD live.
+    // Play in progress: a real mid-run state from the proven solution, so the
+    // shot shows the game's own physics doing the work.
     async drive(page) {
       await page.evaluate(() => {
         const g = window.__gravwell;
-        g.setRoom(6, { lives: 3, cleared: 6, time: 27.4 });
-        g.solve([{ x: 300, y: 300 }, { x: 470, y: 180 }], 2.35);
-        g.state.run.trail.push({ x: g.state.run.pod.x - 26, y: g.state.run.pod.y - 14 });
+        // Room 5 (DRIFT LINE) uses all three posts and wins at 2.93 s, so parking
+        // the sim at 1.5 s shows three posts, a curved trail, and the room still
+        // in play -- the whole mechanic in one honest frame.
+        g.setRoom(4, { lives: 3, cleared: 4, time: 38.5 });
+        const sol = g.state.run.room.solution;
+        g.solve(sol, 1.5);
+        g.setClock(38.5);
       });
       await page.waitForTimeout(420);
     },

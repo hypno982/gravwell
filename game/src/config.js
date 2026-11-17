@@ -10,10 +10,14 @@ export const FIELD = { x: 74, y: 96, w: 848, h: 552 };
 export const PANEL = { x: 950, y: 96, w: 256, h: 552 };
 
 export const PHYSICS = {
-  /** Pull of a single anchor on the pod, in px/s^2 at one radius. Falls off with distance. */
-  pull: 56000,
-  /** Anchors lose authority past this many pixels; the field is finite. */
-  reach: 430,
+  /**
+   * Pull of a single anchor: strength = pull * (1 - d/reach) / d, in px/s^2.
+   * `reach` is the full diagonal of the field, so a post can be felt from
+   * anywhere: a post that does nothing is a post the player cannot reason about.
+   */
+  pull: 150000,
+  /** Anchors fade out to exactly zero here. The field's diagonal, so nothing is out of range. */
+  reach: 1012,
   /** Softening keeps a near anchor from slingshotting the pod to infinity. */
   soften: 46,
   /** The pod always drifts: a faint downward bias keeps rooms from stalling. */

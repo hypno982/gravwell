@@ -32,12 +32,13 @@ export function fieldAt(run, x, y) {
   for (const a of run.anchors) {
     const dx = a.x - x;
     const dy = a.y - y;
-    const d2 = dx * dx + dy * dy + PHYSICS.soften * PHYSICS.soften;
-    const d = Math.sqrt(d2);
+    // Soften only the singularity: a post the pod is sitting on must not fling it.
+    const d = Math.sqrt(dx * dx + dy * dy + PHYSICS.soften * PHYSICS.soften);
     if (d > PHYSICS.reach) continue;
-    // Falloff: strong up close, nothing past reach, smooth at the edge.
+    // Linear falloff to a hard edge, divided by distance: strong enough to steer
+    // from across the field, weak enough that a far post is a nudge, not a yank.
     const fall = 1 - d / PHYSICS.reach;
-    const strength = (PHYSICS.pull * fall * fall) / d2;
+    const strength = (PHYSICS.pull * fall) / d;
     ax += (dx / d) * strength;
     ay += (dy / d) * strength;
   }

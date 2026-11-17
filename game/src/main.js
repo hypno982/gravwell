@@ -256,8 +256,15 @@ export function createGame(canvas) {
       const h = 1 / 120;
       const steps = Math.round(seconds / h);
       for (let i = 0; i < steps; i += 1) {
-        const ev = advance(state.run, h);
-        if (ev !== null) return ev;
+        // Freeze the phase so a harness can park the pod mid-flight without
+        // the win state taking over the frame it is trying to capture.
+        if (state.run.won || state.run.lost) break;
+        advance(state.run, h);
+        if (state.run.won || state.run.lost) {
+          state.run.won = false;
+          state.run.lost = false;
+          break;
+        }
       }
       return null;
     },
